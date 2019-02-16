@@ -45,3 +45,34 @@ class Activity {
 
 }
 ```
+
+Other Features
+--------------
+
+Lifecycle callbacks:
+
+```kotlin
+class Cat(private val on: On) : OnLifecycle {
+    override fun on() {
+        // Cat has been instantiated in scope
+    }
+
+    override fun off() {
+        // Scope has ended
+    }
+}
+
+```
+
+End a scope:
+
+```kotlin
+class Activity {
+    private val on = On()
+
+    override fun onDestroy() {
+        //...
+        on.off()
+    }
+}
+```
