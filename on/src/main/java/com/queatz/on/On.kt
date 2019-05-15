@@ -15,8 +15,6 @@ class On {
         members.forEach {
             it.value.apply { if (this is OnLifecycle) off() }
         }
-        members.clear()
-        membersExternal.clear()
     }
 
     inline fun <reified T : Any> use(member: T) { injectMember(T::class, member) }
