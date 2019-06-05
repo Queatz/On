@@ -9,7 +9,11 @@ class On {
     private val membersExternal = HashMap<KClass<*>, Any>()
 
     inline operator fun <reified T : Any> invoke(): T { return inject(T::class) }
-    inline operator fun <reified T : Any> invoke(block: T.() -> Unit): T { return inject(T::class) }
+    inline operator fun <reified T : Any> invoke(block: T.() -> Unit): T {
+        val member = inject(T::class)
+        block.invoke(member)
+        return member
+    }
 
     fun off() {
         members.forEach {
