@@ -30,9 +30,9 @@ class On constructor(private val parent: On? = null) {
     fun <T : Any> inject(member: KClass<T>, local: Boolean = false): T {
         return when (member) {
             in members -> members[member] as T
-            in if (local) emptyMap<KClass<*>, Any>() else membersExternal -> membersExternal[member] as T
-            in if (local) emptyMap<KClass<*>, Any>() else parent?.members ?: emptyMap<KClass<*>, Any>() -> parent!!.members[member] as T
-            in if (local) emptyMap<KClass<*>, Any>() else parent?.membersExternal ?: emptyMap<KClass<*>, Any>() -> parent!!.membersExternal[member] as T
+            in if (local) emptyMap<KClass<*>, T>() else membersExternal -> membersExternal[member] as T
+            in if (local) emptyMap<KClass<*>, T>() else parent?.members ?: emptyMap<KClass<*>, T>() -> parent!!.members[member] as T
+            in if (local) emptyMap<KClass<*>, T>() else parent?.membersExternal ?: emptyMap<KClass<*>, T>() -> parent!!.membersExternal[member] as T
             else -> {
                 val instance = member.java.getConstructor(On::class.java).newInstance(this)
                 members[member] = instance
