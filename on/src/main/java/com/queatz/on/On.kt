@@ -1,12 +1,11 @@
 package com.queatz.on
 
-import java.util.*
 import kotlin.reflect.KClass
 
 class On constructor(private val parent: On? = null) {
 
-    private val members = HashMap<KClass<*>, Any>()
-    private val membersExternal = HashMap<KClass<*>, Any>()
+    private val members = mutableMapOf<KClass<*>, Any>()
+    private val membersExternal = mutableMapOf<KClass<*>, Any>()
 
     inline operator fun <reified T : Any> invoke(): T = inject(T::class)
     inline operator fun <reified T : Any> invoke(block: T.() -> Unit): T = inject(T::class).also(block)
@@ -31,9 +30,9 @@ class On constructor(private val parent: On? = null) {
     fun <T : Any> inject(member: KClass<T>, local: Boolean = false): T {
         return when (member) {
             in members -> members[member] as T
-            in if (local) emptyMap() else membersExternal -> membersExternal[member] as T
-            in if (local) emptyMap() else parent?.members ?: emptyMap() -> parent!!.members[member] as T
-            in if (local) emptyMap() else parent?.membersExternal ?: emptyMap() -> parent!!.membersExternal[member] as T
+            in if (local) emptyMap<KClass<*>, Any>() else membersExternal -> membersExternal[member] as T
+            in if (local) emptyMap<KClass<*>, Any>() else parent?.members ?: emptyMap<KClass<*>, Any>() -> parent!!.members[member] as T
+            in if (local) emptyMap<KClass<*>, Any>() else parent?.membersExternal ?: emptyMap<KClass<*>, Any>() -> parent!!.membersExternal[member] as T
             else -> {
                 val instance = member.java.getConstructor(On::class.java).newInstance(this)
                 members[member] = instance
