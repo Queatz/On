@@ -28,17 +28,17 @@ class On constructor(private val parent: On? = null) {
     }
 
     fun <T : Any> inject(member: KClass<T>, local: Boolean = false): T {
+        return search(member, local) ?: member.java.getConstructor(On::class.java).newInstance(this).apply {
+            members[member] = this
+            if (this is OnLifecycle) { on() }
+        }
+    }
+
+    fun <T : Any> search(member: KClass<T>, local: Boolean = false): T? {
         return when (member) {
             in members -> members[member] as T
-            in if (local) emptyMap<KClass<*>, T>() else membersExternal -> membersExternal[member] as T
-            in if (local) emptyMap<KClass<*>, T>() else parent?.members ?: emptyMap<KClass<*>, T>() -> parent!!.members[member] as T
-            in if (local) emptyMap<KClass<*>, T>() else parent?.membersExternal ?: emptyMap<KClass<*>, T>() -> parent!!.membersExternal[member] as T
-            else -> {
-                val instance = member.java.getConstructor(On::class.java).newInstance(this)
-                members[member] = instance
-                if (instance is OnLifecycle) { instance.on() }
-                instance
-            }
+            in membersExternal -> membersExternal[member] as T
+            else -> if (!local) parent?.search(member) else null
         }
     }
 }
