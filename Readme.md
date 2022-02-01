@@ -9,7 +9,7 @@ Usage
 Import:
 
 ```groovy
-implementation 'com.github.Queatz:On:0.6.1.4'
+implementation 'com.github.Queatz:On:0.1.6.4'
 ```
 
 Define an injectable:
